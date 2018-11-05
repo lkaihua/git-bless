@@ -1,0 +1,22 @@
+{
+  "name": "git-bless",
+  "version": "1.0.0",
+  "description": "Show how git works with animations.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lkaihua/git-bless.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lkaihua/git-bless/issues"
+  },
+  "homepage": "https://github.com/lkaihua/git-bless#readme",
+  "dependencies": {
+    "d3": "^5.7.0"
+  }
+}
