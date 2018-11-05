@@ -40,7 +40,12 @@ function update(source) {
 
   // Compute the "layout". TODO https://github.com/d3/d3-hierarchy/issues/67
   var index = -1;
-  root.eachBefore(function(n) {
+  // `eachBefore` is a pre-order traversal, since there may be multiple children 
+  // it is generalised from `root, left, right` to `root, children`.
+  //
+  // Similarly, `eachBefore` post-order traverslal is generalised 
+  // from `left, right, root` to `children, root`
+  root.eachBefore(function(n) { 
     n.x = ++index * barHeight;
     n.y = n.depth * 20;
   });
