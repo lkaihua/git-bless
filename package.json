@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/lkaihua/git-bless#readme",
   "dependencies": {
-    "d3": "^5.7.0"
+    "d3": "^5.7.0",
+    "d3-dag": "^0.1.2"
   }
 }

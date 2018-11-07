@@ -70,7 +70,7 @@ function update(source) {
   nodeEnter.append("text")
       .attr("dy", 3.5)
       .attr("dx", 5.5)
-      .text(function(d) { return d.data.name; });
+      .text(nodeName);
 
   // Transition nodes to their new position.
   nodeEnter.transition()
@@ -81,9 +81,13 @@ function update(source) {
   node.transition()
       .duration(duration)
       .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-      .style("opacity", 1)
-    .select("rect")
+      .style("opacity", 1);
+
+  node.select("rect")
       .style("fill", color);
+      
+  node.select("text")
+      .text(nodeName);
 
   // Transition exiting nodes to the parent's new position.
   node.exit().transition()
@@ -103,11 +107,14 @@ function update(source) {
         var o = {x: source.x0, y: source.y0};
         return diagonal({source: o, target: o});
       })
-    .transition()
+    .transition()         
       .duration(duration)
-      .attr("d", diagonal);
+      .attr("d", diagonal); 
+    // Links of insertion
+
 
   // Transition links to their new position.
+  // Links of other unclicked elements
   link.transition()
       .duration(duration)
       .attr("d", diagonal);
@@ -115,6 +122,7 @@ function update(source) {
   // Transition exiting nodes to the parent's new position.
   link.exit().transition()
       .duration(duration)
+      // Animations
       .attr("d", function(d) {
         var o = {x: source.x, y: source.y};
         return diagonal({source: o, target: o});
@@ -130,6 +138,7 @@ function update(source) {
 
 // Toggle children on click.
 function click(d) {
+  // when clicking on parent node, modify `children` property
   if (d.children) {
     d._children = d.children;
     d.children = null;
@@ -141,5 +150,17 @@ function click(d) {
 }
 
 function color(d) {
+  // return 'transparent';
   return d._children ? "blue" : d.children ? "silver" : "white";
+}
+
+function nodeName(d) {
+  // return d.data.name;
+  if (d.children) {
+    return "- " + d.data.name; 
+  }
+  if (d._children) {
+    return "+ " + d.data.name;
+  }
+  return d.data.name;
 }
