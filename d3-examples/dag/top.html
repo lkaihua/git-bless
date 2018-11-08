@@ -41,13 +41,18 @@
       function draw(raw) {
         const dag = d3.dratify()(raw);
         d3.sugiyama()
-          // .layering(d3.layeringSimplex())
+          .layering(d3.layeringSimplex())
           .coord(d3.coordGreedy())
           (dag);
         // top-left to bottom-right
         dag.each(n => [n.x, n.y] = [n.y, n.x]);
         // dag.eachLinks(l => (l.data.points || []).forEach(p => [p.x, p.y] = [p.y, p.x + 0.03]));
         layout(dag, 1920, 500);
+      }
+
+      function refresh() {
+        grafo = [...grafo, {id: grafo.length, parentIds:[grafo.length - 1]}]
+        draw(grafo)
       }
     </script>
   </head>

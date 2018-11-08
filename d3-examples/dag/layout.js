@@ -2,9 +2,11 @@
 function layout(dag, w=500, h=500) {
   const padding = 0.01;
   const ratio = w / h;
+  const duration = 400;
   const svg = d3.select('svg')
-  // const svg = d3.select('body').selectAll('svg').data(dag)
-  //   .enter().append('svg')
+
+  // TODO: reuse existing elements
+  svg.selectAll('*').remove()
   
   const line = d3.line()
     .curve(d3.curveBasis)
@@ -12,7 +14,7 @@ function layout(dag, w=500, h=500) {
     .y(d => d.y);
   
   // add an arrow marker
-  svg.append("svg:defs").append("svg:marker")
+  svg.append("defs").append("marker")
     .attr("id", "triangle")
     .attr("refX", 0.02)
     .attr("refY", 0.02)
@@ -32,11 +34,12 @@ function layout(dag, w=500, h=500) {
       // return path;
       const [s, e] = path.split("L")
       // manually add a mid point for arrow
-      return `${s}L${(source.x + target.x) * ratio /2},${(source.y + target.y)/2}L${e}`;
+      return `${s}L${(source.x + target.x) * ratio / 2},${(source.y + target.y) / 2}L${e}`;
     })
     
   const nodes = svg.append('g').classed('node', true)
-    .selectAll('g').data(dag.descendants()).enter().append('g')
+    .selectAll('g').data(dag.descendants())
+    .enter().append('g')
     .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`);
 
   nodes.append('circle')
@@ -47,7 +50,7 @@ function layout(dag, w=500, h=500) {
 
   // Measure and trim
   const { x, y, width, height } = svg.node().getBBox();
-  console.log( x, y, width, height)
+  // console.log( x, y, width, height)
   svg.attr('viewBox', [x - padding, y - padding, width + 2 * padding, height + 2 * padding].join(' '));
 
   // Add text, which screws up measureement
