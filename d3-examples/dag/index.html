@@ -47,7 +47,7 @@
         // top-left to bottom-right
         dag.each(n => [n.x, n.y] = [n.y, n.x]);
         // dag.eachLinks(l => (l.data.points || []).forEach(p => [p.x, p.y] = [p.y, p.x + 0.03]));
-        layout(dag, 1920, 500);
+        layout(dag, 960, 500);
       }
 
       function refresh() {
@@ -57,6 +57,6 @@
     </script>
   </head>
   <body>
-    <svg width="960" height="500"></svg>
+    <svg></svg>
   </body>
 </html>
