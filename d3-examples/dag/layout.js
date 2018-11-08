@@ -34,6 +34,9 @@ function layout(dag) {
     .selectAll('g').data(dag.descendants()).enter().append('g')
     .attr('transform', ({x, y}) => `translate(${x}, ${y})`);
   nodes.append('circle');
+  nodes.on("click", function(d){
+    console.log(d)
+  })
 
   // Measure and trim
   const { x, y, width, height } = svg.node().getBBox();
@@ -41,5 +44,6 @@ function layout(dag) {
 
   // Add text, which screws up measureement
   nodes.append('text').text(d => d.id)
-    .attr('transform', () => `translate(0, 0.020)`)
+    // Add the radius as the vertical alignment for text
+    .attr('transform', () => `translate(0, 0.025)`)
 }
