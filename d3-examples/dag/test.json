@@ -1,0 +1,29 @@
+[
+  {
+    "id": "0",
+    "timestamp": 1,
+    "parentIds": []
+  },
+  {
+    "id": "1",
+    "timestamp": 2,
+    "parentIds": ["0"]
+  },
+  {
+    "id": "2",
+    "parentIds": ["1"]
+  },
+  {
+    "id": "3",
+    "parentIds": ["2"]
+  },
+  {
+    "id": "4",
+    "parentIds": ["1"]
+  },
+  {
+    "id": "5",
+    "head": true,
+    "parentIds": ["4"]
+  }
+]
