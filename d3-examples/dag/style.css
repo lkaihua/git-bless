@@ -1,0 +1,43 @@
+html, body, svg {
+  margin: 0;
+  width: 100%;
+  /* height: 100%; */
+  /* overflow: hidden; */
+}
+
+text {
+  font-size: 0.04px;
+  font-family: monospace;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.link path {
+  stroke: black;
+  stroke-width: 0.006;
+  fill: none;
+}
+
+.node circle {
+  fill: white;
+  stroke: black;
+  stroke-width: 0.006;
+}
+
+.node circle.head {
+  fill:#BCDEF3;
+  stroke: black;
+  stroke-width: 0.008;
+}
+
+.tag .branch-text{
+  font-size: 0.03px;
+  fill: #24292e;
+  stroke-width: 0.002;
+}
+
+.tag rect {
+  fill: #e6ebf1;
+  stroke: #1b1f2359;
+  stroke-width: 0.001;
+}

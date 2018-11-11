@@ -1,7 +1,8 @@
 [
     {
       "id": "0",
-      "parentIds": []
+      "parentIds": [],
+      "branches": ["init"]
     },
     {
       "id": "1",
@@ -45,28 +46,19 @@
     },
     {
       "id": "11",
+      "branches": ["master", "feature-2", "feature-3"],
       "parentIds": ["9"]
     },
     {
       "id": "12",
+      "branches": [],
       "parentIds": ["6"]
     },
     {
       "id": "13",
-      "parentIds": ["12"]
-    },
-    {
-      "id": "14",
-      "parentIds": ["13"]
-    },
-    {
-      "id": "15",
-      "parentIds": ["14"]
-    },
-    {
-      "id": "16",
       "head": true,
-      "parentIds": ["15"]
-    }   
+      "branches": ["feature-1"],
+      "parentIds": ["12"]
+    } 
 ]
   
