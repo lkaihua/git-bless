@@ -24,20 +24,56 @@ text {
   stroke-width: 0.006;
 }
 
-.node circle.head {
-  fill:#BCDEF3;
+.node circle.isBranch {
+  fill:#55D0A2;
   stroke: black;
   stroke-width: 0.008;
 }
 
-.tag .branch-text{
+.node circle.isMaster {
+  fill:#BDDEF2;
+  stroke-width: 0.008;
+}
+
+.node circle.isHead {
+  /* fill:#BCDEF3; */
+  stroke: #E96163;
+  stroke-width: 0.008;
+}
+
+.node .hashText{
+  font-size: 0.025px;
+}
+
+.tag .tag-text .headText{
+  fill: #E96163;
+  font-weight: bold;
+  font-size: 0.04px;
+}
+.tag .branchText{
+  font-size: 0.03px;
+  /* fill: black; */
+  /* stroke-width: 0.002; */
+}
+
+.tag .branchText{
   font-size: 0.03px;
   fill: #24292e;
   stroke-width: 0.002;
 }
 
 .tag rect {
-  fill: #e6ebf1;
-  stroke: #1b1f2359;
-  stroke-width: 0.001;
+  fill: #ffffff;
+  stroke: black;
+  stroke-width: 0.002;
+}
+.tag rect.isBranch{
+  fill:#55D0A2;
+}
+.tag rect.isMaster{
+  fill:#BCDEF3;
+}
+.tag rect.isHead{
+  stroke: #E96163;
+  stroke-width: 0.006;
 }

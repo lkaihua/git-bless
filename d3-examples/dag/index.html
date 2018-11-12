@@ -33,17 +33,17 @@
       function addOneNode(branch="master") {
         grafo.forEach(p => {
           p.head = false
-          if(p.branch == branch) {
-            p.branch = null
+          if(p.branches && p.branches.includes(branch)) {
+            p.branches = p.branches.filter(b => b!= branch)
           }
         })
-        // console.log(prev)
+        console.log(grafo)
         
         grafo = [...grafo, {
           id: grafo.length, 
           parentIds:[grafo.length - 1], 
           head: true,
-          branch: "master"
+          branches: ["master"]
         }]
         draw(grafo)
       }
@@ -60,7 +60,13 @@
     </script>
   </head>
   <body>
-    <svg></svg>
+    <div id="hints"></div>
+    <div id="graph">
+      <svg></svg>
+    </div>
+    <div id="history"></div>
+    <div id="terminal"></div>
+    
     <button id="addOneNode">add one</button>
     <button id="commit">commit</button>
   </body>

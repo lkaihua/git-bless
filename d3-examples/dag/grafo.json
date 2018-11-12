@@ -1,15 +1,16 @@
 [
     {
       "id": "0",
-      "parentIds": [],
-      "branches": ["init"]
+      "parentIds": []
     },
     {
       "id": "1",
+      "name": "1'",
       "parentIds": ["0"]
     },
     {
       "id": "2",
+      "branches": ["feature-0"],
       "parentIds": ["1"]
     },
     {
@@ -46,7 +47,7 @@
     },
     {
       "id": "11",
-      "branches": ["master", "feature-2", "feature-3"],
+      "branches": ["feature-2", "feature-3"],
       "parentIds": ["9"]
     },
     {
@@ -57,8 +58,8 @@
     {
       "id": "13",
       "head": true,
-      "branches": ["feature-1"],
+      "branches": ["feature-1", "master"],
       "parentIds": ["12"]
-    } 
+    }
 ]
   

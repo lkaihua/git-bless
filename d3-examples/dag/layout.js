@@ -23,19 +23,38 @@ function abbreviate(name, maxLength=10) {
   if(!name){
     return null;
   }
-
-  
   if (name.length > maxLength) {
     return name.slice(0, maxLength - 2) + ".."
   } 
   return name;
 }
 
+function hash(key) {
+  function random(l) {
+    const chars = 'abcdef0123456789'.split('');
+    const results = [];
+    for (let i = 0; i < l; i += 1) {
+      results.push(chars[Math.floor(Math.random() * chars.length)])
+    }
+    return results.join("")
+  }
+
+  hash.store = hash.store || {};
+  let result;
+  if (hash.store[key]) {
+    result = hash.store[key];
+  } else {
+    result = random(6);
+    hash.store[key] = result;
+  }
+  return result;
+}
+
 function layout(dag, w = 500, h = 500) {
   const padding = {
-    top: 0.05,
+    top: 0.06,
     right: 0.02,
-    bottom: 0.05,
+    bottom: 0.06,
     left: 0.02
   };
   const ratio = w / h;
@@ -74,34 +93,32 @@ function layout(dag, w = 500, h = 500) {
     svg.select('.tag');
 
   const allTags = tags.selectAll('g').data(sortedNodes);
-  // console.log(sortedNodes)
   
   const filledTags = allTags.enter().filter(d => d.data.branches && d.data.branches.length)
     .append("g")
       .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
   
   filledTags.append("g").classed("tag-box", true).html(d => {
-    const branches = d.data.branches;
-    const template = branches.map((branch,index) => {
-      return `<rect x="-0.1" y="${radius + index * 0.07}" width="0.2" height="0.06"></rect>`
+    // const branches = ;
+    const branchBoxes = d.data.branches.map((branch,index) => {
+      let branchType;
+      let y = radius + 0.02 + index * 0.07;
+      switch (branch) {
+        case "master":
+          branchType = "isMaster";
+          break;
+  
+        default:
+          branchType = "isBranch";
+          break;
+      }
+      return `<rect class="${branchType}" rx="0.01" ry="0.01" x="-0.1" y="${y}" width="0.2" height="0.06"></rect>`
     })
-    return template.join("")
+    const headBox = "" // d.data.head ? `<rect class="isHead" rx="0.01" ry="0.01" x="-0.05" y="-0.16" width="0.1" height="0.06"></rect>` : "";
+    return [...branchBoxes, headBox].join("");
   })
 
-  // filledTags
-  //   .append('rect')
-  //     .attr('x', -0.1)
-  //     .attr('y', radius + 0.01)
-  //     .attr('width', 0.2)
-  //     .attr('height', 0.06)
-  //     .attr('rx', 0.01)
-  //     .attr('ry', 0.01)
 
-  allTags.filter(d => !d.data.branches || !d.data.branches.length)
-    .transition()
-    .style("opacity", 0)
-    .duration(duration)
-    .remove()
 
   const links = svg.select('.link').size() == 0 ?
     svg.append('g').classed('link', true) :
@@ -147,12 +164,7 @@ function layout(dag, w = 500, h = 500) {
    * Must be called before adding text, otherwise adding text 
    * screws up measurement in Safari.
    */
-  const {
-    x,
-    y,
-    width,
-    height
-  } = svg.node().getBBox();
+  const {x, y, width, height} = svg.node().getBBox();
   svg.attr('viewBox',
     [ 
       x - padding.left, 
@@ -166,21 +178,23 @@ function layout(dag, w = 500, h = 500) {
   // enterNode.selectAll('.branch').data(sortedNodes).enter()
   //   .append('text').classed('branch', true).text(d => {
   // filledTags.append('text')
-  //   .classed('branch-text', true)
+  //   .classed('branchText', true)
   //   .text(d => abbreviate(d.data.branches))
   //   .attr("dy", "0.1")
 
 
-  filledTags.append('g').html(d => {
-    const branches = d.data.branches;
-    const template = branches.map((branch,index) => {
-      return `<text class="branch-text" dy="${radius + index * 0.07 + 0.04}">${branch}</text>`
+  filledTags.append('g').classed("tag-text", true).html(d => {
+    const branchTexts = d.data.branches.map((branch,index) => {
+      return `<text class="branchText" dy="${radius + 0.02 + index * 0.07 + 0.04}">${branch}</text>`
     })
-    return template.join("")
+    const headText = d.data.head ? `<text class="headText" dy="${-radius - 0.065}">HEAD</text>`: ""
+    return [...branchTexts, headText].join("")
   })  
 
-  enterNode.append('text').text(d => d.id)
-    .attr("dy", "0.015")
+  enterNode.append('text').text(d => d.data.name || d.id)
+    .attr("dy", "0.015");
+  enterNode.append('text').text(d => d.data.hash || hash(d.id))
+    .attr("dy", "-0.065").classed("hashText", true)
 
   // enterNode.append('rect')
   //   .attr("width", 0.1)
@@ -216,8 +230,26 @@ function layout(dag, w = 500, h = 500) {
     .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
 
   nodes.selectAll('circle')
-    .classed('head', d => !!d.data.head)
+    .classed('isBranch', d => !!d.data.branches && d.data.branches.length)
+    .classed('isMaster', d => !!d.data.branches && d.data.branches.includes("master"))
+    .classed('isHead', d => !!d.data.head)
 
+  filledTags.style("opacity", 0)
+    .transition()
+    .style("opacity", 1)
+    .duration()
+
+  // TODO: here the filter is removing node-2 by mistake
+  allTags.filter(d => {
+    let a = !d.data.branches || !d.data.branches.length
+    console.log(d, a)
+    return a
+  })
+    .transition()
+    .style("opacity", 0)
+    .duration(duration)
+    .remove()
+    
   // filledTags.selectAll('g')
   //   .transition()
   //   .duration(duration)
