@@ -1,15 +1,17 @@
 'use strict';
 
 function addOnceArrowMarker(svg, id, reversed = true) {
-  const u = 0.0075;
-  const arrow = `M 0,0 ${4*u},${2*u} 0,${4*u} ${u},${2*u}`;
-  const arrowReversed = `M 0,${2*u} ${4*u},${4*u} ${3*u},${2*u} ${4*u},0`
+  const unit = 0.0075;
+  // `M 0,0 4,2 0,4 1,2`; => each number multiplied by unit
+  const reducer = (acc, current) => acc + " " + current.map(x => x * unit).join(",")
+  const arrow = [[0,0], [4,2], [0,4], [1,2]].reduce(reducer, "M");
+  const arrowReversed = [[0,2], [4,4], [3,2], [4,0]].reduce(reducer, "M");;
 
   if (!svg.select(`marker#${id}`).size()) {
     svg.append("defs").append("marker")
       .attr("id", id)
-      .attr("refX", 2*u)
-      .attr("refY", 2*u)
+      .attr("refX", 2 * unit)
+      .attr("refY", 2 * unit)
       // .attr("markerWidth", 0.10)
       // .attr("markerHeight", 0.10)
       .attr("markerUnits", "userSpaceOnUse")
@@ -30,7 +32,7 @@ function abbreviate(name, maxLength=10) {
   return name;
 }
 
-function hash(key) {
+function hash(key, len=6) {
   function random(l) {
     const chars = 'abcdef0123456789'.split('');
     const results = [];
@@ -45,15 +47,15 @@ function hash(key) {
   if (hash.store[key]) {
     result = hash.store[key];
   } else {
-    result = random(6);
+    result = random(len);
     hash.store[key] = result;
   }
   return result;
 }
 
 function updateTagBox(d, radius = 0.05) {
-  const branchBoxes = d.data.branches && d.data.branches.length ? 
-    d.data.branches.map((branch,index) => {
+  const branchBoxes = d.data.tags && d.data.tags.length ? 
+    d.data.tags.map((branch,index) => {
       let branchType;
       let y = radius + 0.04 + index * 0.07;
       switch (branch) {
@@ -72,8 +74,8 @@ function updateTagBox(d, radius = 0.05) {
 }
 
 function updateTagText(d, radius = 0.05){
-  const branchTexts = d.data.branches && d.data.branches.length ? 
-    d.data.branches.map((branch,index) => {
+  const branchTexts = d.data.tags && d.data.tags.length ? 
+    d.data.tags.map((branch,index) => {
       return `<text class="branchText" dy="${radius + 0.02 + index * 0.07 + 0.06}">${branch}</text>`
     }) : [];
   const headText = d.data.head ? `<text class="headText" dy="${-radius - 0.02}">HEAD</text>`: ""
@@ -100,7 +102,7 @@ function layout(dag, w = 500, h = 500) {
     .x(d => d.x * ratio)
     .y(d => d.y);
 
-  addOnceArrowMarker(svg, triangle);
+
 
   // Nodes and links are sorted to make sure
   // the last added items are in the tail,
@@ -119,6 +121,8 @@ function layout(dag, w = 500, h = 500) {
     return targetOrder;
   })
 
+  /** Add svg defs */
+  addOnceArrowMarker(svg, triangle);
 
   /** 
    * Links: the directed edges between nodes.
@@ -176,7 +180,7 @@ function layout(dag, w = 500, h = 500) {
   
   const allTags = tags.selectAll('g').data(sortedNodes, d => d.id);
   
-  const filledTags = allTags.enter().filter(d => d.data.branches && d.data.branches.length)
+  const filledTags = allTags.enter().filter(d => d.data.tags && d.data.tags.length)
     .append("g").classed('tag-item', true)
       .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
   
@@ -241,8 +245,8 @@ function layout(dag, w = 500, h = 500) {
     .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
 
   nodes.selectAll('circle')
-    .classed('isBranch', d => !!d.data.branches && d.data.branches.length)
-    .classed('isMaster', d => !!d.data.branches && d.data.branches.includes("master"))
+    .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
+    .classed('isMaster', d => !!d.data.tags && d.data.tags.includes("master"))
     .classed('isHead', d => !!d.data.head)
   
   tags.selectAll('g.tag-item')

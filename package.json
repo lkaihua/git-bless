@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
+    "browser-sync": "browser-sync start --file \".\" --server \".\" --port 8081 --watch",
     "build": "babel src -d lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,6 +32,7 @@
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
+    "browser-sync": "^2.26.3",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   }

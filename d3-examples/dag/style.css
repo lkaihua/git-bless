@@ -1,7 +1,7 @@
 html, body, svg {
   margin: 0;
   width: 100%;
-  /* height: 100%; */
+  height: 100%;
   /* overflow: hidden; */
 }
 
@@ -63,13 +63,13 @@ text {
 .tag .branchText{
   font-size: 0.03px;
   fill: #24292e;
-  stroke-width: 0.002;
+  stroke-width: 0.001;
 }
 
 .tag rect {
   fill: #ffffff;
   stroke: black;
-  stroke-width: 0.002;
+  stroke-width: 0;
 }
 .tag rect.isBranch{
   fill:#55D0A2;

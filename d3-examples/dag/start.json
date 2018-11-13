@@ -6,7 +6,7 @@
   {
     "id": "1",
     "head": true,
-    "branch": "master",
+    "tags": ["master"],
     "parentIds": ["0"]
   }
 ]

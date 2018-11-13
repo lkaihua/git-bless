@@ -10,7 +10,7 @@
     },
     {
       "id": "2",
-      "branches": ["feature-0"],
+      "tags": ["feature-0"],
       "parentIds": ["1"]
     },
     {
@@ -47,18 +47,18 @@
     },
     {
       "id": "11",
-      "branches": ["feature-2", "feature-3"],
+      "tags": ["feature-2", "feature-3"],
       "parentIds": ["9"]
     },
     {
       "id": "12",
-      "branches": [],
+      "tags": [],
       "parentIds": ["6"]
     },
     {
       "id": "13",
       "head": true,
-      "branches": ["feature-1", "master"],
+      "tags": ["feature-1", "master"],
       "parentIds": ["12"]
     }
 ]
