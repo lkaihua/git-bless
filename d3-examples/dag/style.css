@@ -14,40 +14,44 @@ text {
 
 .link path {
   stroke: black;
-  stroke-width: 0.006;
+  stroke-width: 0.005;
   fill: none;
+}
+
+.node text.isHead{
+  fill: #0085BD;
 }
 
 .node circle {
   fill: white;
   stroke: black;
-  stroke-width: 0.006;
+  stroke-width: 0.005;
 }
 
 .node circle.isBranch {
   fill:#55D0A2;
   stroke: black;
-  stroke-width: 0.008;
+  stroke-width: 0.005;
 }
 
 .node circle.isMaster {
   fill:#BDDEF2;
-  stroke-width: 0.008;
 }
 
 .node circle.isHead {
   /* fill:#BCDEF3; */
-  stroke: #E96163;
+  stroke: #0085BD;
   stroke-width: 0.008;
 }
 
 .node .hashText{
   font-size: 0.025px;
+  fill: #414339;
 }
 
 .tag .tag-text .headText{
-  fill: #E96163;
-  font-weight: bold;
+  fill: #0085BD;
+  /* font-weight: bold; */
   font-size: 0.04px;
 }
 .tag .branchText{
@@ -74,6 +78,6 @@ text {
   fill:#BCDEF3;
 }
 .tag rect.isHead{
-  stroke: #E96163;
+  stroke: #0085BD;
   stroke-width: 0.006;
 }

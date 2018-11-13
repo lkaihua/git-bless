@@ -40,11 +40,24 @@
         console.log(grafo)
         
         grafo = [...grafo, {
-          id: grafo.length, 
+          id: "" + grafo.length, 
           parentIds:[grafo.length - 1], 
           head: true,
           branches: ["master"]
         }]
+        draw(grafo)
+      }
+
+      function removeOneNode(branch="master") {
+        grafo.pop()
+        console.log(grafo)
+        
+        // grafo = [...grafo, {
+        //   id: "" + grafo.length, 
+        //   parentIds:[grafo.length - 1], 
+        //   head: true,
+        //   branches: ["master"]
+        // }]
         draw(grafo)
       }
 
@@ -68,10 +81,11 @@
     <div id="terminal"></div>
     
     <button id="addOneNode">add one</button>
+    <button id="removeOneNode">remove one</button>
     <button id="commit">commit</button>
   </body>
   <script>
-  d3.select("#addOneNode")
-    .on("click", addOneNode)
+  d3.select("#addOneNode").on("click", addOneNode)
+  d3.select("#removeOneNode").on("click", removeOneNode)
   </script>
 </html>
