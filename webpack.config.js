@@ -13,6 +13,10 @@ module.exports = {
     path: path.resolve('dist'),
     filename: 'app.bundle.js'
   },
+  devServer: {
+    port: 8081,
+    host: '0.0.0.0'
+  },
   module: {
     rules: [{
       test: /\.js$/,

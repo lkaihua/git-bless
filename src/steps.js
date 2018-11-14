@@ -108,6 +108,7 @@ class VerticalLinearStepper extends React.Component {
     const steps = getSteps();
     const { activeStep } = this.state;
 
+    // TODO: react binding patterns improved
     return (
       <div className={classes.root}>
         <Stepper activeStep={activeStep} orientation="vertical">
