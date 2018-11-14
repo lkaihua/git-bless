@@ -33,6 +33,8 @@ function abbreviate(name, maxLength=10) {
 }
 
 function hash(key, len=6) {
+  hash.store = hash.store || {};
+
   function random(l) {
     const chars = 'abcdef0123456789'.split('');
     const results = [];
@@ -41,8 +43,7 @@ function hash(key, len=6) {
     }
     return results.join("")
   }
-
-  hash.store = hash.store || {};
+  
   let result;
   if (hash.store[key]) {
     result = hash.store[key];
@@ -81,6 +82,8 @@ function updateTagText(d, radius = 0.05){
   const headText = d.data.head ? `<text class="headText" dy="${-radius - 0.02}">HEAD</text>`: ""
   return [...branchTexts, headText].join("")
 }
+
+
 
 function layout(dag, w = 500, h = 500) {
   layout.cache = layout.cache || {};
@@ -127,10 +130,12 @@ function layout(dag, w = 500, h = 500) {
   addOnceArrowMarker(svg, triangle);
 
   /** 
+   * 
    * Links: the directed edges between nodes.
    *  
    * Here we draw links in lower canvas layers, so other elements 
    * will not be covered by links.
+   * 
    **/
   const links = svg.select('.link').size() == 0 ?
     svg.append('g').classed('link', true) :
@@ -152,6 +157,7 @@ function layout(dag, w = 500, h = 500) {
   allLinks.exit().remove();
 
   /**
+   * 
    * Nodes: each node has a circle, an id inside of it, and a hash text
    * 
    */
@@ -194,17 +200,20 @@ function layout(dag, w = 500, h = 500) {
   
   allTags.selectAll('.tag-box').html(d => updateTagBox(d))
   allTags.exit().remove();
-  // const e = allTags.exit()
-  // console.log("e", e.nodes())
-  // e.remove();
 
-  /****** Animations ******/
+
+
+  /**
+   * 
+   * Animations
+   * 
+   */
   
   links.selectAll('path')
     .transition()
     .duration(duration)
-    .attr("marker-mid", `url(#${triangle})`)
-    .attr('d', ({source, target, data}) => {
+    .attr("marker-mid", `url(#${triangle})`)  // add arrow style
+    .attr('d', ({source, target, data}) => {  // add the data points in the middle
       const path = line(
         [{
           x: source.x,
@@ -214,11 +223,11 @@ function layout(dag, w = 500, h = 500) {
           y: target.y
         }])
       );
-      // return path;
+      // return path; // draw lines, without arrows
       const [s, e] = path.split("L");
-      // manually add a mid point for arrow
-      const mid_x = (source.x + target.x) * ratio / 2
-      const mid_y = (source.y + target.y) / 2
+      // add a mid point for arrow
+      const mid_x = (source.x + target.x) * ratio / 2;
+      const mid_y = (source.y + target.y) / 2;
       return `${s} L ${mid_x},${mid_y} L ${e}`;
     })
 
@@ -260,7 +269,11 @@ function layout(dag, w = 500, h = 500) {
     layout.cache.resized = true;
   }
 
-  /****** Add text after updating view box ******/
+  /**
+   * 
+   * Add text after updating view box
+   * 
+   */
 
   filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d))  
 
