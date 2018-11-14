@@ -236,7 +236,9 @@ function layout(dag, w = 500, h = 500) {
       // return path;
       const [s, e] = path.split("L");
       // manually add a mid point for arrow
-      return `${s}L${(source.x + target.x) * ratio / 2},${(source.y + target.y) / 2}L${e}`;
+      const mid_x = (source.x + target.x) * ratio / 2
+      const mid_y = (source.y + target.y) / 2
+      return `${s} L ${mid_x},${mid_y} L ${e}`;
     })
 
   nodes.selectAll('g')
