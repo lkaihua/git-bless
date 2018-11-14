@@ -5,6 +5,17 @@ html, body, svg {
   /* overflow: hidden; */
 }
 
+#buttons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+button {
+  padding: 1em;
+  font-size: 1.2em;
+}
+
+
 text {
   font-size: 0.04px;
   font-family: monospace;

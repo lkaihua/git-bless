@@ -83,6 +83,8 @@ function updateTagText(d, radius = 0.05){
 }
 
 function layout(dag, w = 500, h = 500) {
+  layout.cache = layout.cache || {};
+  
   const padding = {
     top: 0.06,
     right: 0.02,
@@ -134,8 +136,9 @@ function layout(dag, w = 500, h = 500) {
     svg.append('g').classed('link', true) :
     svg.select('.link');
 
-  links.selectAll('path')
-    .data(sortedLinks).enter().append('path')
+  const allLinks = links.selectAll('path').data(sortedLinks)
+  
+  allLinks.enter().append('path')
     .attr('d', ({source, target, data}) => line(
       [{
         x: source.x,
@@ -145,6 +148,8 @@ function layout(dag, w = 500, h = 500) {
         y: target.y
       }])
     ));
+  
+  allLinks.exit().remove();
 
   /**
    * Nodes: each node has a circle, an id inside of it, and a hash text
@@ -158,18 +163,18 @@ function layout(dag, w = 500, h = 500) {
   // const allNodes = nodes.selectAll('g')
   const allNodes = nodes.selectAll('g').data(sortedNodes, d => d.id)
   
-  const enterNode = allNodes.enter().append('g')
+  const enterNodes = allNodes.enter().append('g')
 
-  enterNode
-    .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+  enterNodes
+    .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`) 
     .on("click", function (d) {
       // Output the info of this node, including {id, layer, x, y, children, data}
       // console.log(d)
     })
     .append('circle')
     .attr('r', radius)
-  
-  // enterNode.exit().remove();
+
+  allNodes.exit().remove();
 
   /**
    * Tags: HEAD tag, branch tag name and background box.
@@ -178,44 +183,20 @@ function layout(dag, w = 500, h = 500) {
     svg.append('g').classed('tag', true) :
     svg.select('.tag');
   
-  const allTags = tags.selectAll('g').data(sortedNodes, d => d.id);
+  const allTags = tags.selectAll('g.tag-item').data(sortedNodes, d => d.id);
   
   const filledTags = allTags.enter().filter(d => d.data.tags && d.data.tags.length)
     .append("g").classed('tag-item', true)
-      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
   
-  filledTags.append("g").classed("tag-box", true).html(d => updateTagBox(d))
+  filledTags
+      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+    .append("g").classed("tag-box", true).html(d => updateTagBox(d))
   
   allTags.selectAll('.tag-box').html(d => updateTagBox(d))
-  
-
-    
-  /**
-   * Measure and trim.
-   * Must be called before adding text, otherwise adding text 
-   * screws up measurement in Safari.
-   */
-  const {x, y, width, height} = svg.node().getBBox();
-  svg.attr('viewBox',
-    [ 
-      x - padding.left, 
-      y - padding.top, 
-      width + padding.left + padding.right, 
-      height + padding.top + padding.bottom,
-    ].join(' ')
-  );
-
-  /****** Add text after updating view box ******/
-
-  filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d))  
-
-  allTags.selectAll('.tag-text').html(d => updateTagText(d))
-
-  enterNode.append('text').text(d => d.data.name || d.id)
-    .attr("dy", "0.015");
-
-  enterNode.append('text').text(d => d.data.hash || hash(d.id))
-    .attr("dy", "0.08").classed("hashText", true)
+  allTags.exit().remove();
+  // const e = allTags.exit()
+  // console.log("e", e.nodes())
+  // e.remove();
 
   /****** Animations ******/
   
@@ -255,5 +236,40 @@ function layout(dag, w = 500, h = 500) {
     .transition()
     .duration(duration)
     .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+
+    
+  /**
+   * Measure and trim.
+   * Must be called before adding text, otherwise adding text 
+   * screws up measurement in Safari.
+   *
+   * Lesson learnt: dynamically update viewBox is problematic.
+   * Resize it when intialized and keep it fixed.
+   */
+  if (!layout.cache.resized) {
+    const {x, y, width, height} = svg.node().getBBox();
+    // console.log("resize:", x, y, width, height)
+    svg.attr('viewBox',
+      [ 
+        x - padding.left, 
+        y - padding.top, 
+        width + padding.left + padding.right, 
+        height + padding.top + padding.bottom,
+      ].join(' ')
+    )
+    layout.cache.resized = true;
+  }
+
+  /****** Add text after updating view box ******/
+
+  filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d))  
+
+  allTags.selectAll('.tag-text').html(d => updateTagText(d))
+
+  enterNodes.append('text').text(d => d.data.name || d.id)
+    .attr("dy", "0.015");
+
+  enterNodes.append('text').text(d => d.data.hash || hash(d.id))
+    .attr("dy", "0.08").classed("hashText", true)
 
 }
