@@ -39,9 +39,9 @@ function hash(key, len=6) {
     const chars = 'abcdef0123456789'.split('');
     const results = [];
     for (let i = 0; i < l; i += 1) {
-      results.push(chars[Math.floor(Math.random() * chars.length)])
+      results.push(chars[Math.floor(Math.random() * chars.length)]);
     }
-    return results.join("")
+    return results.join("");
   }
   
   let result;

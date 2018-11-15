@@ -9,48 +9,32 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-const styles = theme => ({
-  root: {
-    width: '100%',
-  },
-  button: {
-    marginTop: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-  },
-  actionsContainer: {
-    marginBottom: theme.spacing.unit * 2,
-  },
-  resetContainer: {
-    padding: theme.spacing.unit * 3,
-  },
-});
+// const steps = [
+//   {
+//     title: 'Select campaign settings 2',
+//     content: `For each ad campaign that you create, you can control how much
+//               you're willing to spend on clicks and conversions, which networks
+//               and geographical locations you want your ads to show on, and more.`,
+//   },
+//   {
+//     title: 'Create an ad group 2',
+//     content: 'An ad group contains one or more ads which target a shared set of keywords.',
+//   },
+//   {
+//     title: 'Create an ad 2',
+//     content: `Try out different ad text to see what brings in the most customers,
+//               and learn how to enhance your ads using features like ad extensions.
+//               If you run into any problems with your ads, find out how to tell if
+//               they're running and how to resolve approval issues.`
+//   },
+// ];
 
-const steps = [
-  {
-    title: 'Select campaign settings 2',
-    content: `For each ad campaign that you create, you can control how much
-              you're willing to spend on clicks and conversions, which networks
-              and geographical locations you want your ads to show on, and more.`,
-  },
-  {
-    title: 'Create an ad group 2',
-    content: 'An ad group contains one or more ads which target a shared set of keywords.',
-  },
-  {
-    title: 'Create an ad 2',
-    content: `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`
-  },
-];
-
-function getSteps() {
-  return steps.map(step => step.title);
-}
-function getStepContent(step) {
-  return steps[step].content;
-}
+// function getSteps(steps) {
+//   return steps.map(step => step.title);
+// }
+// function getStepContent(steps, index) {
+//   return steps[index].content;
+// }
 
 // function getSteps() {
 //   return ['Select campaign settings', 'Create an ad group', 'Create an ad'];
@@ -74,8 +58,21 @@ function getStepContent(step) {
 //   }
 // }
 
-
-
+const styles = theme => ({
+  root: {
+    width: '100%',
+  },
+  button: {
+    marginTop: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+  },
+  actionsContainer: {
+    marginBottom: theme.spacing.unit * 2,
+  },
+  resetContainer: {
+    padding: theme.spacing.unit * 3,
+  },
+});
 
 class VerticalLinearStepper extends React.Component {
   constructor() {
@@ -104,20 +101,20 @@ class VerticalLinearStepper extends React.Component {
   }
   
   render() {
-    const { classes } = this.props;
-    const steps = getSteps();
+    const { classes, steps } = this.props;
+    // const steps = getSteps(content);
     const { activeStep } = this.state;
 
     // TODO: react binding patterns improved
     return (
       <div className={classes.root}>
         <Stepper activeStep={activeStep} orientation="vertical">
-          {steps.map((label, index) => {
+          {steps.map(({label, content}) => {
             return (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
                 <StepContent>
-                  <Typography>{getStepContent(index)}</Typography>
+                  <Typography>{content}</Typography>
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button
@@ -144,8 +141,13 @@ class VerticalLinearStepper extends React.Component {
         </Stepper>
         {activeStep === steps.length && (
           <Paper square elevation={0} className={classes.resetContainer}>
-            <Typography>All steps completed - you&quot;re finished</Typography>
-            <Button onClick={this.handleReset} className={classes.button}>
+            <Typography>All steps completed.</Typography>
+            <Button 
+              variant="contained"
+              color="default" 
+              onClick={this.handleReset} 
+              className={classes.button}
+            >
               Reset
             </Button>
           </Paper>
@@ -157,7 +159,7 @@ class VerticalLinearStepper extends React.Component {
 
 VerticalLinearStepper.propTypes = {
   classes: PropTypes.object,
+  content: PropTypes.array
 };
 
 export default withStyles(styles)(VerticalLinearStepper);
-// export default VerticalLinearStepper;

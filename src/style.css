@@ -1,0 +1,94 @@
+html, body, svg {
+  margin: 0;
+  /* width: 100%; */
+  /* height: 100%; */
+  /* overflow: hidden; */
+}
+
+#buttons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+button {
+  padding: 1em;
+  font-size: 1.2em;
+}
+
+
+text {
+  font-size: 0.04px;
+  font-family: monospace;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.link path {
+  stroke: black;
+  stroke-width: 0.005;
+  fill: none;
+}
+
+.node text.isHead{
+  fill: #0085BD;
+}
+
+.node circle {
+  fill: white;
+  stroke: black;
+  stroke-width: 0.005;
+}
+
+.node circle.isBranch {
+  fill:#55D0A2;
+  stroke: black;
+  stroke-width: 0.005;
+}
+
+.node circle.isMaster {
+  fill:#BDDEF2;
+}
+
+.node circle.isHead {
+  /* fill:#BCDEF3; */
+  stroke: #0085BD;
+  stroke-width: 0.008;
+}
+
+.node .hashText{
+  font-size: 0.025px;
+  fill: #414339;
+}
+
+.tag .tag-text .headText{
+  fill: #0085BD;
+  /* font-weight: bold; */
+  font-size: 0.04px;
+}
+.tag .branchText{
+  font-size: 0.03px;
+  /* fill: black; */
+  /* stroke-width: 0.002; */
+}
+
+.tag .branchText{
+  font-size: 0.03px;
+  fill: #24292e;
+  stroke-width: 0.001;
+}
+
+.tag rect {
+  fill: #ffffff;
+  stroke: black;
+  stroke-width: 0;
+}
+.tag rect.isBranch{
+  fill:#55D0A2;
+}
+.tag rect.isMaster{
+  fill:#BCDEF3;
+}
+.tag rect.isHead{
+  stroke: #0085BD;
+  stroke-width: 0.006;
+}
