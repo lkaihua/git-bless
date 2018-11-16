@@ -2,33 +2,57 @@ import * as d3_original from 'd3';
 import * as d3_dag from 'd3-dag';
 const d3 = Object.assign(d3_original, d3_dag);
 import React from 'react';
-// import ReactDOM from 'react-dom';
+import { connect } from "react-redux";
+import treeData from "./data/merge_vs_rebase.json";
+
+const mapStateToProps = state => {
+  return {activeStep: state.activeStep}
+}
 
 class Painter extends React.Component {
   constructor(props){
     super(props);
     this.svg = null;
     this.cache = {};
+    console.log(treeData);
     this.layout = this.layout.bind(this);
+    this.parse = this.parse.bind(this);
+    
   }
 
   componentDidMount() {
-    this.layout(this.props.data.dag, this.svgNode, 2, 1);
+    
+    
+    this.layout(this.parse(treeData), this.svgNode, 3, 1);
+    // console.log(this.props)
+    // this.layout(this.props.data.dag, this.svgNode, 2, 1);
   }
 
   componentDidUpdate() {
-    this.layout(this.props.data.dag, this.svgNode, 2, 1);
+
+    // console.log(this.props)
+    // this.layout(this.props.data.dag, this.svgNode, 2, 1);
   }
 
   render() {
     return (
+      <div>
       <svg ref={n => this.svgNode = n}></svg>
+      <p>active: {this.props.activeStep}</p>
+      </div>
     )
   }
 
-  // parse() {
-    
-  // }
+  parse(raw) {
+    const dag = d3.dratify()(raw);
+    d3.sugiyama()
+      .layering(d3.layeringSimplex())
+      .coord(d3.coordGreedy())
+      (dag);
+    // top-left to bottom-right
+    dag.each(n => [n.x, n.y] = [n.y, n.x]);
+    return dag
+  }
 
   layout(dag, svgNode, w = 500, h = 500) {
     console.log(dag)
@@ -326,5 +350,6 @@ function updateTagText(d, radius = 0.05){
   return [...branchTexts, headText].join("")
 }
 
-
-export default Painter;
+const connectedPainter = connect(mapStateToProps)(Painter)
+export default connectedPainter;
+// export default Painter;

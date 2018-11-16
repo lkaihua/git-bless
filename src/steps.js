@@ -8,6 +8,7 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import { connect } from "react-redux";
 
 // const steps = [
 //   {
@@ -74,29 +75,41 @@ const styles = theme => ({
   },
 });
 
+const updateActiveStep = step => ({
+  type: "UPDATE_ACTIVE_STEP", 
+  payload: step,
+});
+
+const mapDispatchToProps = dispatch => ({
+  updateActiveStep: step => dispatch(updateActiveStep(step))
+})
+
 class VerticalLinearStepper extends React.Component {
   constructor() {
     super();
     this.state = {
       activeStep: 0,
     };
-  
+    
     this.handleNext = () => {
       this.setState(state => ({
         activeStep: state.activeStep + 1,
       }));
+      this.props.updateActiveStep(this.state.activeStep + 1)
     };
   
     this.handleBack = () => {
       this.setState(state => ({
         activeStep: state.activeStep - 1,
       }));
+      this.props.updateActiveStep(this.state.activeStep - 1)
     };
   
     this.handleReset = () => {
       this.setState({
         activeStep: 0,
       });
+      this.props.updateActiveStep(0)
     };
   }
   
@@ -157,9 +170,12 @@ class VerticalLinearStepper extends React.Component {
   }
 }
 
+
 VerticalLinearStepper.propTypes = {
   classes: PropTypes.object,
   content: PropTypes.array
 };
 
-export default withStyles(styles)(VerticalLinearStepper);
+const connectedVerticalLinearStepper = connect(null, mapDispatchToProps)(VerticalLinearStepper);
+
+export default withStyles(styles)(connectedVerticalLinearStepper);

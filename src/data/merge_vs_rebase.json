@@ -1,0 +1,32 @@
+[
+  {
+    "id": "0",
+    "parentIds": []
+  },
+  {
+    "id": "1",
+    "parentIds": ["0"]
+  },
+  {
+    "id": "2",
+    "parentIds": ["1"]
+  },
+  {
+    "id": "3",
+    "parentIds": ["2"],
+    "tags": ["master"]
+  },
+  {
+    "id": "4",
+    "parentIds": ["1"]
+  },
+  {
+    "id": "5",
+    "parentIds": ["4"]
+  },
+  {
+    "id": "6",
+    "parentIds": ["5"],
+    "tags": ["feature"]
+  }
+]
