@@ -14,7 +14,7 @@
   {
     "id": "3",
     "parentIds": ["2"],
-    "tags": ["feature"] 
+    "tags": ["master"]
   },
   {
     "id": "4",
@@ -22,7 +22,11 @@
   },
   {
     "id": "5",
-    "parentIds": ["4"],
-    "tags": ["master"]
+    "parentIds": ["4"]
+  },
+  {
+    "id": "6",
+    "parentIds": ["5"],
+    "tags": ["feature"]
   }
 ]

@@ -6,14 +6,19 @@
     <script src="../../node_modules/d3/dist/d3.js"></script>
     <script src="../../node_modules/d3-dag/dist/d3-dag.js"></script>
     <!-- <script src="../../node_modules/uuid/index.js"></script> -->
+    <script src="fetch.umd.js"></script>
     <script src="layout.js"></script>
     <script>
-      (async function() {
+      // (async function() {
         // const grafo = await fetch('grafo.json', { mode: 'no-cors' }).then(r => r.json());
-        const grafo = await fetch('grafo.json', { mode: 'no-cors' }).then(r => r.json());
-        draw(grafo)
-        window.grafo = grafo
-      })();
+        // const grafo = await 
+        fetch('test.json', { mode: 'no-cors' }).then(r => r.json()).then(r => {
+          draw(r)
+          window.grafo = r;
+        });
+      //   draw(grafo)
+      //   window.grafo = grafo
+      // })();
 
       // const store = new Map();
 

@@ -1,9 +1,9 @@
-import * as d3_original from 'd3';
+import * as d3_ from 'd3';
 import * as d3_dag from 'd3-dag';
-const d3 = Object.assign(d3_original, d3_dag);
 import React from 'react';
 import { connect } from "react-redux";
-import treeData from "./data/merge_vs_rebase.json";
+import treeData from "../data/merge_vs_rebase.json";
+const d3 = Object.assign(d3_, d3_dag);
 
 const mapStateToProps = state => {
   return {activeStep: state.activeStep}
@@ -23,7 +23,7 @@ class Painter extends React.Component {
   componentDidMount() {
     
     
-    this.layout(this.parse(treeData), this.svgNode, 3, 1);
+    this.layout(this.parse(treeData), this.svgNode, 4, 1);
     // console.log(this.props)
     // this.layout(this.props.data.dag, this.svgNode, 2, 1);
   }
@@ -37,8 +37,8 @@ class Painter extends React.Component {
   render() {
     return (
       <div>
-      <svg ref={n => this.svgNode = n}></svg>
-      <p>active: {this.props.activeStep}</p>
+        <svg ref={n => this.svgNode = n}></svg>
+        <p>active: {this.props.activeStep}</p>
       </div>
     )
   }
@@ -51,7 +51,7 @@ class Painter extends React.Component {
       (dag);
     // top-left to bottom-right
     dag.each(n => [n.x, n.y] = [n.y, n.x]);
-    return dag
+    return dag;
   }
 
   layout(dag, svgNode, w = 500, h = 500) {
@@ -61,7 +61,7 @@ class Painter extends React.Component {
       return;
     }
     const svg = d3.select(svgNode)
-    
+    const radius = 0.05;
     const padding = {
       top: 0.06,
       right: 0.02,
@@ -70,7 +70,6 @@ class Painter extends React.Component {
     };
     const ratio = w / h;
     const duration = 400;
-    const radius = 0.05;
     const triangle = "triangle";
     const line = d3.line()
       .curve(d3.curveLinear)
@@ -112,18 +111,38 @@ class Painter extends React.Component {
   
     const allLinks = links.selectAll('path').data(sortedLinks)
     
-    allLinks.enter().append('path')
-      .attr('d', ({source, target, data}) => line(
-        [{
-          x: source.x,
-          y: source.y
-        }].concat(data.points || [], [{
-          x: target.x,
-          y: target.y
-        }])
-      ));
+    allLinks.enter()
+      .append('path')
+      // .attr('d', ({source, target, data}) => line(
+      //   [{
+      //     x: source.x,
+      //     y: source.y
+      //   }].concat(data.points || [], [{
+      //     x: target.x,
+      //     y: target.y
+      //   }])
+      // ));
+        .attr('d', ({source, target, data}) => {  // add the data points in the middle
+          const path = line(
+            [{
+              x: source.x,
+              y: source.y
+            }].concat(data.points || [], [{
+              x: target.x,
+              y: target.y
+            }])
+          );
+          // return path; // draw lines, without arrows
+          const [s, e] = path.split("L");
+          // add a mid point for arrow
+          const mid_x = (source.x + target.x) * ratio / 2;
+          const mid_y = (source.y + target.y) / 2;
+          return `${s} L ${mid_x},${mid_y} L ${e}`;
+        })
+      
     
     allLinks.exit().remove();
+
   
     /**
      * 
@@ -141,15 +160,23 @@ class Painter extends React.Component {
     const enterNodes = allNodes.enter().append('g')
   
     enterNodes
-      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`) 
-      .on("click", function (d) {
-        // Output the info of this node, including {id, layer, x, y, children, data}
-        // console.log(d)
-      })
+        .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`) 
+        .on("click", function (d) {
+          // Output the info of this node, including {id, layer, x, y, children, data}
+          // console.log(d)
+        })
       .append('circle')
-      .attr('r', radius)
+        .attr('r', radius)
+        .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
+        .classed('isMaster', d => !!d.data.tags && d.data.tags.includes("master"))
+        .classed('isHead', d => !!d.data.head)
   
     allNodes.exit().remove();
+
+    // nodes.selectAll('circle')
+    //   .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
+    //   .classed('isMaster', d => !!d.data.tags && d.data.tags.includes("master"))
+    //   .classed('isHead', d => !!d.data.head)
   
     /**
      * Tags: HEAD tag, branch tag name and background box.
@@ -170,17 +197,90 @@ class Painter extends React.Component {
     allTags.selectAll('.tag-box').html(d => updateTagBox(d))
     allTags.exit().remove();
   
+
+    /**
+     * Measure and trim.
+     * Must be called before adding text, otherwise adding text 
+     * screws up measurement in Safari.
+     *
+     * Lesson learnt: dynamically update viewBox is problematic.
+     * Resize it when intialized and keep it fixed.
+     */
+    // if (!this.cache.resized && svg && svg.size()) {
+    //   try {
+    //     const {
+    //       x,
+    //       y,
+    //       width,
+    //       height
+    //     } = svg.node().getBBox();
+    //     // console.log("resize:", x, y, width, height)
+    //     svg.attr('viewBox',
+    //       [
+    //         x - padding.left,
+    //         y - padding.top,
+    //         width + padding.left + padding.right,
+    //         height + padding.top + padding.bottom,
+    //       ].join(' ')
+    //     )
+    //     this.cache.resized = true;
+    //   } catch (e) {
+    //     console.error("Fail to call getBBox on <svg></svg>.");
+    //   }
+    // }
+    
+    if (svg && svg.size() && !this.cache.box) {
+      this.cache.bbox = svg.node().getBBox();
+      console.log(this.cache.bbox)
+      svg.attr('viewBox',
+        [
+          this.cache.bbox.x - padding.left,
+          this.cache.bbox.y - padding.top,
+          this.cache.bbox.width + padding.left + padding.right,
+          this.cache.bbox.height + padding.top + padding.bottom,
+        ].join(' ')
+      )
+    }
+    
+    
   
+    /**
+     * 
+     * Add text after updating view box
+     * 
+     */
   
+    filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d))  
+  
+    allTags.selectAll('.tag-text').html(d => updateTagText(d))
+  
+    enterNodes.append('text').text(d => d.data.name || d.id)
+      .attr("dy", "0.015");
+  
+    enterNodes.append('text').text(d => d.data.hash || hash(d.id))
+      .attr("dy", "0.08").classed("hashText", true)
+
     /**
      * 
      * Animations
      * 
      */
-    
-    links.selectAll('path')
+  
+  
+    nodes.selectAll('g')
       .transition()
       .duration(duration)
+      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+  
+  
+    tags.selectAll('g.tag-item')
+      .transition()
+      .duration(duration)
+      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+
+    links.selectAll('path')
+      .transition()
+      .duration(duration /2)
       .attr("marker-mid", `url(#${triangle})`)  // add arrow style
       .attr('d', ({source, target, data}) => {  // add the data points in the middle
         const path = line(
@@ -199,70 +299,22 @@ class Painter extends React.Component {
         const mid_y = (source.y + target.y) / 2;
         return `${s} L ${mid_x},${mid_y} L ${e}`;
       })
-  
-    nodes.selectAll('g')
-      .transition()
-      .duration(duration)
-      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
-  
-    nodes.selectAll('circle')
-      .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
-      .classed('isMaster', d => !!d.data.tags && d.data.tags.includes("master"))
-      .classed('isHead', d => !!d.data.head)
-    
-    tags.selectAll('g.tag-item')
-      .transition()
-      .duration(duration)
-      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
-  
+
+    // const all = d3.selectAll("g, path");
+    // console.log(all)
+    // all.transition().call(endall, function() { 
+    //   console.log("all done") 
+    //   d3.select('g.link').attr('overflow', 'auto')
+    // })
       
-    /**
-     * Measure and trim.
-     * Must be called before adding text, otherwise adding text 
-     * screws up measurement in Safari.
-     *
-     * Lesson learnt: dynamically update viewBox is problematic.
-     * Resize it when intialized and keep it fixed.
-     */
-    if (!this.cache.resized && svg && svg.size()) {
-      try {
-        const {
-          x,
-          y,
-          width,
-          height
-        } = svg.node().getBBox();
-        // console.log("resize:", x, y, width, height)
-        svg.attr('viewBox',
-          [
-            x - padding.left,
-            y - padding.top,
-            width + padding.left + padding.right,
-            height + padding.top + padding.bottom,
-          ].join(' ')
-        )
-        this.cache.resized = true;
-      } catch (e) {
-        console.error("Fail to call getBBox on <svg></svg>.");
-      }
-    }
-  
-    /**
-     * 
-     * Add text after updating view box
-     * 
-     */
-  
-    filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d))  
-  
-    allTags.selectAll('.tag-text').html(d => updateTagText(d))
-  
-    enterNodes.append('text').text(d => d.data.name || d.id)
-      .attr("dy", "0.015");
-  
-    enterNodes.append('text').text(d => d.data.hash || hash(d.id))
-      .attr("dy", "0.08").classed("hashText", true)
-  
+    // this.cache.bbox && this.cache.bbox.x && svg.attr('viewBox',
+    //   [
+    //     this.cache.bbox.x - padding.left,
+    //     this.cache.bbox.y - padding.top,
+    //     this.cache.bbox.width + padding.left + padding.right,
+    //     this.cache.bbox.height + padding.top + padding.bottom,
+    //   ].join(' ')
+    // )
   }
   
 }
@@ -349,6 +401,23 @@ function updateTagText(d, radius = 0.05){
   const headText = d.data.head ? `<text class="headText" dy="${-radius - 0.02}">HEAD</text>`: ""
   return [...branchTexts, headText].join("")
 }
+
+/**
+ * 
+ * @param {*} transition 
+ * @param {*} callback 
+ * d3.selectAll("g").transition().call(endall, function() { console.log("all done") })
+ */
+function endall(transition, callback) { 
+  if (typeof callback !== "function") throw new Error("Wrong callback in endall");
+  if (transition.size() === 0) { callback() }
+  let n = 0; 
+  transition 
+      .each(function() { ++n; }) 
+      .on("end", function() { if (!--n) callback.apply(this, arguments); }); 
+} 
+
+
 
 const connectedPainter = connect(mapStateToProps)(Painter)
 export default connectedPainter;

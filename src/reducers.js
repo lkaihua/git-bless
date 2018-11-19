@@ -1,6 +1,15 @@
+import { createActions, handleActions, combineActions } from "redux-actions";
+
 const initState = {
   activeStep: 0
 };
+
+// TODO: understanding how to add action
+// const { 
+//   updateActiveStep
+// } = createActions({
+//   UPDATE_ACTIVE_STEP: (step) => ({})
+// })
 
 const rootReducer = (state = initState, action) => {
   switch (action.type) {
