@@ -48,7 +48,7 @@ export function items(state = [], action) {
 export function step(state = 0, action) {
   switch (action.type) {
     case actionTypes.UPDATE_ACTIVE_STEP:
-      return action.step; //todo: replace with step
+      return action.step;
 
     default:
       return state;

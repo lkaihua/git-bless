@@ -255,7 +255,7 @@ class Painter extends React.Component {
     //     ].join(' ')
     //   )
     // }
-    if (svg && svg.size() && !this.cache.box) {
+    if (svg && svg.size() && !this.cache.bbox) {
       this.cache.bbox = svg.node().getBBox();
     }
     
@@ -336,10 +336,12 @@ class Painter extends React.Component {
       
       if (findMax(newBBox) > 2 * findMax(this.cache.bbox)) {
         // the <text> layout has caused a bug in safari
-        
-      } else {
-        this.cache.bbox = newBBox
-      }
+        return;
+      } 
+      
+      // else {
+      //   this.cache.bbox = newBBox
+      // }
     
       this.cache.bbox && this.cache.bbox.x && svg.attr('viewBox',
         [
