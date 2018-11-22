@@ -1,49 +1,50 @@
-import * as d3_ from 'd3';
-import * as d3_dag from 'd3-dag';
 import React from 'react';
 import { connect } from "react-redux";
-import treeData from "../data/merge_vs_rebase.json";
+import * as d3_ from 'd3';
+import * as d3_dag from 'd3-dag';
 const d3 = Object.assign(d3_, d3_dag);
 
-const mapStateToProps = state => {
-  return {activeStep: state.activeStep}
-}
+// import treeData from "../data/merge_vs_rebase.json";
+import { hash } from "../utils/hash";
+
+
+const mapStateToProps = state => ({
+  step: state.step
+});
 
 class Painter extends React.Component {
   constructor(props){
     super(props);
     this.svg = null;
     this.cache = {};
-    console.log(treeData);
+    // console.log(treeData);
     this.layout = this.layout.bind(this);
     this.parse = this.parse.bind(this);
-    
   }
 
   componentDidMount() {
     
-    
-    this.layout(this.parse(treeData), this.svgNode, 4, 1);
+    this.layout(this.parse(this.props.data, this.props.step), this.svgNode, 2, 1);
     // console.log(this.props)
     // this.layout(this.props.data.dag, this.svgNode, 2, 1);
   }
 
   componentDidUpdate() {
-
     // console.log(this.props)
-    // this.layout(this.props.data.dag, this.svgNode, 2, 1);
+    this.layout(this.parse(this.props.data, this.props.step), this.svgNode, 2, 1);
   }
 
   render() {
     return (
       <div>
         <svg ref={n => this.svgNode = n}></svg>
-        <p>active: {this.props.activeStep}</p>
       </div>
     )
   }
 
-  parse(raw) {
+  parse(data, step) {
+    const raw = data[step]["graph"]; 
+
     const dag = d3.dratify()(raw);
     d3.sugiyama()
       .layering(d3.layeringSimplex())
@@ -51,11 +52,12 @@ class Painter extends React.Component {
       (dag);
     // top-left to bottom-right
     dag.each(n => [n.x, n.y] = [n.y, n.x]);
+    // console.error('dag', dag)
     return dag;
   }
 
   layout(dag, svgNode, w = 500, h = 500) {
-    console.log(dag)
+    // console.log(dag)
     // const svg = d3.select('svg');
     if (!dag || !svgNode) {
       return;
@@ -155,7 +157,7 @@ class Painter extends React.Component {
       svg.select('.node');
   
     // const allNodes = nodes.selectAll('g')
-    const allNodes = nodes.selectAll('g').data(sortedNodes, d => d.id)
+    const allNodes = nodes.selectAll('g').data(sortedNodes, d => d)
     
     const enterNodes = allNodes.enter().append('g')
   
@@ -163,15 +165,27 @@ class Painter extends React.Component {
         .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`) 
         .on("click", function (d) {
           // Output the info of this node, including {id, layer, x, y, children, data}
-          // console.log(d)
+          console.log(d)
         })
       .append('circle')
+        .style('opacity', 0)
         .attr('r', radius)
         .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
         .classed('isMaster', d => !!d.data.tags && d.data.tags.includes("master"))
         .classed('isHead', d => !!d.data.head)
-  
-    allNodes.exit().remove();
+        .transition().duration(duration)
+        .style("opacity", 1)
+        
+    allNodes.exit()
+      .transition().duration(duration)
+      .style('opacity', 0)
+      .remove();
+
+    allNodes.transition()
+      .duration(duration)
+      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+      
+    
 
     // nodes.selectAll('circle')
     //   .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
@@ -185,9 +199,9 @@ class Painter extends React.Component {
       svg.append('g').classed('tag', true) :
       svg.select('.tag');
     
-    const allTags = tags.selectAll('g.tag-item').data(sortedNodes, d => d.id);
+    const allTags = tags.selectAll('g.tag-item').data(sortedNodes, d => d);
     
-    const filledTags = allTags.enter().filter(d => d.data.tags && d.data.tags.length)
+    const filledTags = allTags.enter()//.filter(d => d.data.tags && d.data.tags.length)
       .append("g").classed('tag-item', true)
     
     filledTags
@@ -229,17 +243,20 @@ class Painter extends React.Component {
     //   }
     // }
     
+    // if (svg && svg.size() && !this.cache.box) {
+    //   this.cache.bbox = svg.node().getBBox();
+    //   console.log(this.cache.bbox)
+    //   svg.attr('viewBox',
+    //     [
+    //       this.cache.bbox.x - padding.left,
+    //       this.cache.bbox.y - padding.top,
+    //       this.cache.bbox.width + padding.left + padding.right,
+    //       this.cache.bbox.height + padding.top + padding.bottom,
+    //     ].join(' ')
+    //   )
+    // }
     if (svg && svg.size() && !this.cache.box) {
       this.cache.bbox = svg.node().getBBox();
-      console.log(this.cache.bbox)
-      svg.attr('viewBox',
-        [
-          this.cache.bbox.x - padding.left,
-          this.cache.bbox.y - padding.top,
-          this.cache.bbox.width + padding.left + padding.right,
-          this.cache.bbox.height + padding.top + padding.bottom,
-        ].join(' ')
-      )
     }
     
     
@@ -267,10 +284,10 @@ class Painter extends React.Component {
      */
   
   
-    nodes.selectAll('g')
-      .transition()
-      .duration(duration)
-      .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+    // nodes.selectAll('g')
+    //   .transition()
+    //   .duration(duration)
+    //   .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
   
   
     tags.selectAll('g.tag-item')
@@ -280,7 +297,7 @@ class Painter extends React.Component {
 
     links.selectAll('path')
       .transition()
-      .duration(duration /2)
+      .duration(duration)
       .attr("marker-mid", `url(#${triangle})`)  // add arrow style
       .attr('d', ({source, target, data}) => {  // add the data points in the middle
         const path = line(
@@ -301,32 +318,56 @@ class Painter extends React.Component {
       })
 
     // const all = d3.selectAll("g, path");
-    // console.log(all)
+    // // console.log(all)
     // all.transition().call(endall, function() { 
     //   console.log("all done") 
-    //   d3.select('g.link').attr('overflow', 'auto')
+    //   // repaint to fix bug in safari
+    //   // d3.select('g.link').attr('overflow', 'auto')
     // })
       
-    // this.cache.bbox && this.cache.bbox.x && svg.attr('viewBox',
-    //   [
-    //     this.cache.bbox.x - padding.left,
-    //     this.cache.bbox.y - padding.top,
-    //     this.cache.bbox.width + padding.left + padding.right,
-    //     this.cache.bbox.height + padding.top + padding.bottom,
-    //   ].join(' ')
-    // )
+    svg.transition().duration(duration).delay(0).on('end', () => {
+      console.log('svg transition done')
+      const newBBox = svg.node().getBBox();
+      console.log(this.cache.bbox, newBBox)
+
+      const findMax = o => {
+        return Math.max(o.x, o.y, o.width, o.height)
+      }
+      
+      if (findMax(newBBox) > 2 * findMax(this.cache.bbox)) {
+        // the <text> layout has caused a bug in safari
+        
+      } else {
+        this.cache.bbox = newBBox
+      }
+    
+      this.cache.bbox && this.cache.bbox.x && svg.attr('viewBox',
+        [
+          this.cache.bbox.x - padding.left,
+          this.cache.bbox.y - padding.top,
+          this.cache.bbox.width + padding.left + padding.right,
+          this.cache.bbox.height + padding.top + padding.bottom,
+        ].join(' ')
+      )
+      // d3.select('g.link').attr('overflow', 'auto')
+    })
+      
+    
   }
   
 }
 
 function addOnceArrowMarker(svg, id, reversed = true) {
+  if (svg.select(`marker#${id}`).size()) {
+    return;
+  }
+
   const unit = 0.0075;
   // `M 0,0 4,2 0,4 1,2`; => each number multiplied by unit
   const reducer = (acc, current) => acc + " " + current.map(x => x * unit).join(",")
   const arrow = [[0,0], [4,2], [0,4], [1,2]].reduce(reducer, "M");
   const arrowReversed = [[0,2], [4,4], [3,2], [4,0]].reduce(reducer, "M");;
 
-  if (!svg.select(`marker#${id}`).size()) {
     svg.append("defs").append("marker")
       .attr("id", id)
       .attr("refX", 2 * unit)
@@ -339,41 +380,20 @@ function addOnceArrowMarker(svg, id, reversed = true) {
       .attr("d", reversed ? arrowReversed : arrow)
       .style("fill", "black");
   }
-}
 
 function abbreviate(name, maxLength=10) {
-  if(!name){
+  if (!name) {
     return null;
   }
   if (name.length > maxLength) {
-    return name.slice(0, maxLength - 2) + ".."
+    return name.slice(0, maxLength - 2) + "..";
   } 
   return name;
 }
 
-function hash(key, len=6) {
-  hash.store = hash.store || {};
 
-  function random(l) {
-    const chars = 'abcdef0123456789'.split('');
-    const results = [];
-    for (let i = 0; i < l; i += 1) {
-      results.push(chars[Math.floor(Math.random() * chars.length)])
-    }
-    return results.join("")
-  }
-  
-  let result;
-  if (hash.store[key]) {
-    result = hash.store[key];
-  } else {
-    result = random(len);
-    hash.store[key] = result;
-  }
-  return result;
-}
-
-function updateTagBox(d, radius = 0.05) {
+function updateTagBox(d) {
+  const radius = 0.05;
   const branchBoxes = d.data.tags && d.data.tags.length ? 
     d.data.tags.map((branch,index) => {
       let branchType;
@@ -393,7 +413,8 @@ function updateTagBox(d, radius = 0.05) {
   return [...branchBoxes, headBox].join("");
 }
 
-function updateTagText(d, radius = 0.05){
+function updateTagText(d){
+  const radius = 0.05;
   const branchTexts = d.data.tags && d.data.tags.length ? 
     d.data.tags.map((tag,index) => {
       return `<text class="branchText" dy="${radius + 0.02 + index * 0.07 + 0.06}">${abbreviate(tag)}</text>`

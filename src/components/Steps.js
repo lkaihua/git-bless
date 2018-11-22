@@ -9,6 +9,8 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { connect } from "react-redux";
+import { updateActiveStep } from "../actions";
+
 
 // const steps = [
 //   {
@@ -75,10 +77,6 @@ const styles = theme => ({
   },
 });
 
-const updateActiveStep = step => ({
-  type: "UPDATE_ACTIVE_STEP", 
-  payload: step,
-});
 
 const mapDispatchToProps = dispatch => ({
   updateActiveStep: step => dispatch(updateActiveStep(step))
@@ -114,7 +112,8 @@ class VerticalLinearStepper extends React.Component {
   }
   
   render() {
-    const { classes, steps } = this.props;
+    const { classes, data } = this.props;
+    const steps = data;
     // const steps = getSteps(content);
     const { activeStep } = this.state;
 

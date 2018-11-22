@@ -11,8 +11,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import store from './store';
-import './style.css'
-
+import './style.css';
 // import Button from '@material-ui/core/Button';
 import App from './components/App';
 

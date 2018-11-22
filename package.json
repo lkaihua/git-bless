@@ -29,8 +29,9 @@
     "react-dom": "^16.6.3",
     "react-redux": "^5.1.1",
     "redux": "^4.0.1",
-    "redux-actions": "^2.6.4",
-    "webpack": "^4.25.1"
+    "redux-thunk": "^2.3.0",
+    "webpack": "^4.25.1",
+    "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
