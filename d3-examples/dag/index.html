@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../node_modules/d3/dist/d3.js"></script>
+    <script src="../../node_modules/d3-dag/dist/d3-dag.js"></script>
+    <!-- <script src="../../node_modules/uuid/index.js"></script> -->
+    <script src="fetch.umd.js"></script>
+    <script src="layout.js"></script>
+    <script>
+      // (async function() {
+        // const grafo = await fetch('grafo.json', { mode: 'no-cors' }).then(r => r.json());
+        // const grafo = await 
+        fetch('test.json', { mode: 'no-cors' }).then(r => r.json()).then(r => {
+          draw(r)
+          window.grafo = r;
+        });
+      //   draw(grafo)
+      //   window.grafo = grafo
+      // })();
+
+      // const store = new Map();
+
+      function draw(raw) {
+        const dag = d3.dratify()(raw);
+        d3.sugiyama()
+          .layering(d3.layeringSimplex())
+          .coord(d3.coordGreedy())
+          (dag);
+        // top-left to bottom-right
+        dag.each(n => [n.x, n.y] = [n.y, n.x]);
+        // dag.eachLinks(l => (l.data.points || []).forEach(p => [p.x, p.y] = [p.y, p.x + 0.03]));
+        // console.log(dag.links(), dag.descendants())
+        layout(dag, 960, 500);
+      }
+
+      function addOneNode(branch="master") {
+        grafo.forEach(p => {
+          p.head = false
+          if(p.tags && p.tags.includes(branch)) {
+            p.tags = p.tags.filter(b => b!= branch)
+          }
+        })
+        console.log(grafo)
+        
+        grafo = [...grafo, {
+          id: "" + grafo.length, 
+          parentIds:[grafo.length - 1], 
+          head: true,
+          tags: ["master"]
+        }]
+        draw(grafo)
+      }
+
+      function removeOneNode(branch="master") {
+        grafo.pop()
+        console.log(grafo)
+        
+        // grafo = [...grafo, {
+        //   id: "" + grafo.length, 
+        //   parentIds:[grafo.length - 1], 
+        //   head: true,
+        //   tags: ["master"]
+        // }]
+        draw(grafo)
+      }
+
+      function commit(message) {
+        // base on current status
+        // add another new commit
+        const c = {
+          id: grafo.length,
+          message,
+          
+        };
+      }
+    </script>
+  </head>
+  <body>
+    <div id="hints"></div>
+    <div id="graph">
+      <svg></svg>
+    </div>
+    <div id="history"></div>
+    <div id="terminal"></div>
+    
+    <div id="buttons">
+      <button id="addOneNode">add one</button>
+      <button id="removeOneNode">remove one</button>
+      <button id="commit">commit</button>
+    </div>
+  </body>
+  <script>
+  d3.select("#addOneNode").on("click", addOneNode)
+  d3.select("#removeOneNode").on("click", removeOneNode)
+  </script>
+</html>

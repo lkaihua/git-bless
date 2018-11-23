@@ -5,10 +5,12 @@
     },
     {
       "id": "1",
+      "name": "1'",
       "parentIds": ["0"]
     },
     {
       "id": "2",
+      "tags": ["feature-0"],
       "parentIds": ["1"]
     },
     {
@@ -45,27 +47,19 @@
     },
     {
       "id": "11",
+      "tags": ["feature-2", "feature-3"],
       "parentIds": ["9"]
     },
     {
       "id": "12",
+      "tags": [],
       "parentIds": ["6"]
     },
     {
       "id": "13",
+      "head": true,
+      "tags": ["feature-1", "master"],
       "parentIds": ["12"]
-    },
-    {
-      "id": "14",
-      "parentIds": ["13"]
-    },
-    {
-      "id": "15",
-      "parentIds": ["14"]
-    },
-    {
-      "id": "16",
-      "parentIds": ["1"]
-    }   
+    }
 ]
   
