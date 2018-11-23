@@ -1,11 +1,27 @@
 # 🙏 git-bless
 
-Show how git works with animations.
-
-D3, React and Redux.
+Git cheat sheet explained with animation.
 
 ![Screenshot](docs/wYSNQFMp5s.gif)
 
+Using D3, React and Redux.
+
+## Features
+
+### Cheat Sheets
+
+- [ ] Merge vs Base
+- [ ] Squash
+- [ ] Copy a folder into another branch
+- [ ] Copy a folder from another branch 
+- [ ] rebase a local branch with remote master
+- [ ] Undo a git push
+- [ ] Revert commits
+- [ ] Undo a git rebase
+
+### Free playground
+
+- [ ] Show how git works with a terminal-style input
 
 ## Links
 
@@ -21,8 +37,6 @@ https://codepen.io/stowball/post/a-dummy-s-guide-to-redux-and-thunk-in-react
 D3 selectionAll transition Explained:
 http://bl.ocks.org/Kcnarf/9e4813ba03ef34beac6e
 
-
-https://www.valentinog.com/blog/react-redux-tutorial-beginners/#React_Redux_tutorial_getting_to_know_the_Redux_store
 
 ### Idea
 A grip on Git. A simple interactive tutorial.
