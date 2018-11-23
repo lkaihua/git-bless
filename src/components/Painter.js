@@ -326,29 +326,32 @@ class Painter extends React.Component {
     // })
       
     svg.transition().duration(duration).delay(0).on('end', () => {
-      console.log('svg transition done')
+      // console.log('svg transition done')
       const newBBox = svg.node().getBBox();
-      console.log(this.cache.bbox, newBBox)
+      // console.log(this.cache.bbox, newBBox)
+      let bbox = this.cache.bbox;
 
       const findMax = o => {
         return Math.max(o.x, o.y, o.width, o.height)
       }
       
-      if (findMax(newBBox) > 2 * findMax(this.cache.bbox)) {
-        // the <text> layout has caused a bug in safari
-        return;
-      } 
+      if (findMax(newBBox) > 2 * findMax(bbox)) {
+        // the <text> layout has caused a bug of calculation of size in Safari
+      }       
+      else if (newBBox.height < bbox.height) {
+        // or height decreases
+      }
+      else {
+        this.cache.bbox = newBBox
+      }
       
-      // else {
-      //   this.cache.bbox = newBBox
-      // }
-    
-      this.cache.bbox && this.cache.bbox.x && svg.attr('viewBox',
+      bbox = this.cache.bbox;
+      bbox && bbox.x && svg.attr('viewBox',
         [
-          this.cache.bbox.x - padding.left,
-          this.cache.bbox.y - padding.top,
-          this.cache.bbox.width + padding.left + padding.right,
-          this.cache.bbox.height + padding.top + padding.bottom,
+          bbox.x - padding.left,
+          bbox.y - padding.top,
+          bbox.width + padding.left + padding.right,
+          bbox.height + padding.top + padding.bottom,
         ].join(' ')
       )
       // d3.select('g.link').attr('overflow', 'auto')

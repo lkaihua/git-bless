@@ -1,8 +1,9 @@
 import React from 'react';
-import Steps from './Steps';
+import ItemList from "./ItemList";
 import Painter from './Painter';
+import Steps from './Steps';
 // import data from '../data/merge_vs_rebase';
-// import data from "../data/merge_vs_rebase.json";
+import data from "../data/merge_vs_rebase.json";
 
 const App = () => {
   return (
