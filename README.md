@@ -4,6 +4,7 @@ Show how git works with animations.
 
 D3, React and Redux.
 
+![Screenshot]("../docs/screenshot.png")
 
 
 ## Links
