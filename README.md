@@ -10,7 +10,7 @@ Using D3, React and Redux.
 
 ### Cheat Sheets
 
-- [ ] Merge vs Base
+- [x] Merge vs Base
 - [ ] Squash
 - [ ] Copy a folder into another branch
 - [ ] Copy a folder from another branch 
