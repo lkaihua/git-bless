@@ -8,7 +8,7 @@ import data from "../data/merge_vs_rebase.json";
 const App = () => {
   return (
     <div>
-      <ItemList></ItemList>
+      {/* <ItemList></ItemList> */}
       <Painter data={data}></Painter>
       <Steps data={data}></Steps>
     </div>

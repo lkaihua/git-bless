@@ -17,21 +17,27 @@ class Painter extends React.Component {
     super(props);
     this.svg = null;
     this.cache = {};
-    // console.log(treeData);
+    this.config = {
+      "width": 3,
+      "height": 1,
+      "padding": {
+        top: 0.06,
+        right: 0.02,
+        bottom: 0.06,
+        left: 0.02
+      },
+      "radius": 0.10
+    }
     this.layout = this.layout.bind(this);
     this.parse = this.parse.bind(this);
   }
 
   componentDidMount() {
-    
-    this.layout(this.parse(this.props.data, this.props.step), this.svgNode, 2, 1);
-    // console.log(this.props)
-    // this.layout(this.props.data.dag, this.svgNode, 2, 1);
+    this.layout(this.parse(this.props.data, this.props.step), this.svgNode);
   }
 
   componentDidUpdate() {
-    // console.log(this.props)
-    this.layout(this.parse(this.props.data, this.props.step), this.svgNode, 2, 1);
+    this.layout(this.parse(this.props.data, this.props.step), this.svgNode);
   }
 
   render() {
@@ -62,15 +68,11 @@ class Painter extends React.Component {
     if (!dag || !svgNode) {
       return;
     }
-    const svg = d3.select(svgNode)
-    const radius = 0.05;
-    const padding = {
-      top: 0.06,
-      right: 0.02,
-      bottom: 0.06,
-      left: 0.02
-    };
-    const ratio = w / h;
+    const svg = d3.select(svgNode);
+    const padding = this.config.padding;
+    const ratio = this.config.width / this.config.height;
+    const radius = this.config.radius;
+
     const duration = 400;
     const triangle = "triangle";
     const line = d3.line()
@@ -206,9 +208,9 @@ class Painter extends React.Component {
     
     filledTags
         .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
-      .append("g").classed("tag-box", true).html(d => updateTagBox(d))
+      .append("g").classed("tag-box", true).html(d => updateTagBox(d, this.config.radius))
     
-    allTags.selectAll('.tag-box').html(d => updateTagBox(d))
+    allTags.selectAll('.tag-box').html(d => updateTagBox(d, this.config.radius))
     allTags.exit().remove();
   
 
@@ -267,15 +269,15 @@ class Painter extends React.Component {
      * 
      */
   
-    filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d))  
+    filledTags.append('g').classed("tag-text", true).html(d => updateTagText(d, this.config.radius))  
   
-    allTags.selectAll('.tag-text').html(d => updateTagText(d))
+    allTags.selectAll('.tag-text').html(d => updateTagText(d, this.config.radius))
   
     enterNodes.append('text').text(d => d.data.name || d.id)
       .attr("dy", "0.015");
   
     enterNodes.append('text').text(d => d.data.hash || hash(d.id))
-      .attr("dy", "0.08").classed("hashText", true)
+      .attr("dy", 0.04 + radius).classed("hashText", true)
 
     /**
      * 
@@ -397,12 +399,11 @@ function abbreviate(name, maxLength=10) {
 }
 
 
-function updateTagBox(d) {
-  const radius = 0.05;
+function updateTagBox(d, radius) {
   const branchBoxes = d.data.tags && d.data.tags.length ? 
     d.data.tags.map((branch,index) => {
       let branchType;
-      let y = radius + 0.04 + index * 0.07;
+      let y = radius + 0.05 + index * 0.07;
       switch (branch) {
         case "master":
           branchType = "isMaster";
@@ -418,11 +419,10 @@ function updateTagBox(d) {
   return [...branchBoxes, headBox].join("");
 }
 
-function updateTagText(d){
-  const radius = 0.05;
+function updateTagText(d, radius){
   const branchTexts = d.data.tags && d.data.tags.length ? 
     d.data.tags.map((tag,index) => {
-      return `<text class="branchText" dy="${radius + 0.02 + index * 0.07 + 0.06}">${abbreviate(tag)}</text>`
+      return `<text class="branchText" dy="${radius + 0.02 + index * 0.07 + 0.07}">${abbreviate(tag)}</text>`
     }) : [];
   const headText = d.data.head ? `<text class="headText" dy="${-radius - 0.02}">HEAD</text>`: ""
   return [...branchTexts, headText].join("")

@@ -1,7 +1,7 @@
 [
   {
-    "label": "Working on a feature branch while the master branch is updated",
-    "content": "Consider what happens when you start working on a new feature in a dedicated branch, then another team member updates the master branch with new commits. This results in a forked history, which should be familiar to anyone who has used Git as a collaboration tool.",
+    "label": "Working on a *feature* branch while the *master* branch is updated",
+    "content": "Consider this: you are working on a new `feature` in a dedicated branch (your new commits are represented as node `2` and `3`), then other team members have updated the `master` branch with their new commits (represented as node `4` and `5`).",
     "graph": [
       {
         "id": "0",
@@ -33,8 +33,8 @@
     ]
   },
   {
-    "label": "Merge Option",
-    "content": "First option is to merge the master branch into the feature branch. This creates a new merge commit in the feature branch that ties together the histories of both branches. Merging is nice because it’s a non-destructive operation. The existing branches are not changed in any way. On the other hand, this also means that the feature branch will have an extraneous merge commit every time you need to incorporate upstream changes. If master is very active, this can pollute your feature branch’s history quite a bit.",
+    "label": "*Merge*",
+    "content": "The first option is to merge the `master` branch into the `feature` branch. This creates a new merge commit in the feature branch (node `6`) that ties together the histories of both branches. Merging is nice because it’s a non-destructive operation, which means the existing branches are not changed in any way. On the other hand, this also means that the feature branch will have an extraneous merge commit every time you need to incorporate upstream changes. If `master` is very active, this can pollute `feature` branch’s history quite a bit.",
     "graph": [
       {
         "id": "0",
@@ -64,8 +64,7 @@
       },
       {
         "id": "6",
-        "name": "6*",
-        "parentIds": ["3"],
+        "parentIds": ["3", "5"],
         "tags": ["feature"],
         "head": true
       }
@@ -73,7 +72,7 @@
   },
   {
     "label": "Reset",
-    "content": "",
+    "content": "Now let's reset and choose a different strategy -- `rebase`. Both `merge` and `rebase` are used to incorporate branches, however they are very different. ",
     "graph": [
       {
         "id": "0",
@@ -105,8 +104,8 @@
     ]
   },
   {
-    "label": "Rebase option",
-    "content": "As an alternative to merging, you can rebase the feature branch onto master branch. This moves the entire feature branch to begin on the tip of the master branch, effectively incorporating all of the new commits in master. But, instead of using a merge commit, rebasing re-writes the project history by creating brand new commits for each commit in the original branch.",
+    "label": "*Rebase*",
+    "content": "As an alternative to merging, you can rebase the `feature` branch onto `master` branch. This moves the entire `feature` branch to begin on the tip of the `master` branch, effectively incorporating all of the new commits in `master`. But, instead of using a merge commit, rebasing re-writes the project history by creating brand new commits for each commit in the original branch. Reference: [https://www.atlassian.com/git/tutorials/merging-vs-rebasing](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)",
     "graph": [
       {
         "id": "0",
@@ -118,12 +117,12 @@
       },
       {
         "id": "2",
-        "name": "2*",
+        "name": "2'",
         "parentIds": ["5"]
       },
       {
         "id": "3",
-        "name": "3*",
+        "name": "3'",
         "parentIds": ["2"],
         "tags": ["feature"],
         "head": true

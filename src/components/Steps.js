@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { connect } from "react-redux";
 import { updateActiveStep } from "../actions";
+import ReactMarkdown from 'react-markdown';
 
 
 // const steps = [
@@ -124,9 +125,11 @@ class VerticalLinearStepper extends React.Component {
           {steps.map(({label, content}) => {
             return (
               <Step key={label}>
-                <StepLabel>{label}</StepLabel>
+                <StepLabel><ReactMarkdown source={label} /></StepLabel>
                 <StepContent>
-                  <Typography>{content}</Typography>
+                  <Typography>
+                    <ReactMarkdown source={content} />
+                  </Typography>
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button

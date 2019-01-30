@@ -5,6 +5,11 @@ html, body, svg {
   /* overflow: hidden; */
 }
 
+svg{
+  width: 100%;
+  max-width: 1000px;
+}
+
 #buttons {
   position: fixed;
   bottom: 0;
@@ -17,7 +22,7 @@ button {
 
 
 text {
-  font-size: 0.04px;
+  font-size: 0.05px;
   font-family: monospace;
   text-anchor: middle;
   pointer-events: none;
@@ -52,11 +57,11 @@ text {
 .node circle.isHead {
   /* fill:#BCDEF3; */
   stroke: #0085BD;
-  stroke-width: 0.008;
+  stroke-width: 0.010;
 }
 
 .node .hashText{
-  font-size: 0.025px;
+  font-size: 0.03px;
   fill: #414339;
 }
 
