@@ -159,7 +159,9 @@ class Painter extends React.Component {
       svg.select('.node');
   
     // const allNodes = nodes.selectAll('g')
-    const allNodes = nodes.selectAll('g').data(sortedNodes, d => d)
+    // console.table(sortedNodes)
+    // const allNodes = nodes.selectAll('g').data(sortedNodes, d => d)
+    const allNodes = nodes.selectAll('g').data(sortedNodes, d => d["id"])
     
     const enterNodes = allNodes.enter().append('g')
   
@@ -178,16 +180,25 @@ class Painter extends React.Component {
         .transition().duration(duration)
         .style("opacity", 1)
         
-    allNodes.exit()
-      .transition().duration(duration)
-      .style('opacity', 0)
-      .remove();
-
+    // console.debug("exit", allNodes.exit())
+    // console.debug("enter", allNodes.enter())
+    // allNodes.exit()
+    //   .transition().duration(duration)
+    //   .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
+      // .style('opacity', 0)
+      // .remove();
+  
+    allNodes.select('circle')
+      .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
+      .classed('isMaster', d => !!d.data.tags && d.data.tags.includes("master"))
+      .classed('isHead', d => !!d.data.head)
+    allNodes.exit().remove();
     allNodes.transition()
       .duration(duration)
       .attr('transform', ({x, y}) => `translate(${x * ratio}, ${y})`)
       
     
+    // console.log('circle', allNodes.select('circle'))
 
     // nodes.selectAll('circle')
     //   .classed('isBranch', d => !!d.data.tags && d.data.tags.length)
@@ -371,9 +382,9 @@ function addOnceArrowMarker(svg, id, reversed = true) {
 
   const unit = 0.0075;
   // `M 0,0 4,2 0,4 1,2`; => each number multiplied by unit
-  const reducer = (acc, current) => acc + " " + current.map(x => x * unit).join(",")
-  const arrow = [[0,0], [4,2], [0,4], [1,2]].reduce(reducer, "M");
-  const arrowReversed = [[0,2], [4,4], [3,2], [4,0]].reduce(reducer, "M");;
+  const formatter = (acc, current) => acc + " " + current.map(x => x * unit).join(",")
+  const arrow = [[0,0], [4,2], [0,4], [1,2]].reduce(formatter, "M");
+  const arrowReversed = [[0,2], [4,4], [3,2], [4,0]].reduce(formatter, "M");;
 
     svg.append("defs").append("marker")
       .attr("id", id)
